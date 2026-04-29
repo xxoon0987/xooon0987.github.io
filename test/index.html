@@ -40,31 +40,27 @@
   </div>
 
   <script>
-    // 你的合約地址與 ABI
-    const CONTRACT_ADDRESS = "0x255401c62c8Cb7Ad12DE50D5fb287584Ea2f1b4A"; // 你的合約地址
+    const CONTRACT_ADDRESS = "0x255401c62c8Cb7Ad12DE50D5fb287584Ea2f1b4A";
+    const SEPOLIA_CHAIN_ID = "0xaa36a7";
     const CONTRACT_ABI = [
       { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
       { "inputs": [{ "internalType": "string", "name": "_newMessage", "type": "string" }], "name": "updateMessage", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
       { "inputs": [], "name": "message", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "stateMutability": "view", "type": "function" }
     ];
 
-    // 定義 DOM 元素
     const connectBtn = document.getElementById("connectBtn");
     const updateBtn = document.getElementById("updateBtn");
     const messageOutput = document.getElementById("messageOutput");
     const newMessageInput = document.getElementById("newMessageInput");
     const output = document.getElementById("output");
 
-    // 定義 Ethers 相關變數
     let provider, signer, contract, readOnlyContract;
 
-    // 函式：顯示日誌訊息
     function log(message) {
       output.textContent += `${message}\n`;
       output.scrollTop = output.scrollHeight;
     }
 
-    // 函式：連接 MetaMask
     async function connectWallet() {
       try {
         if (!window.ethereum) {
@@ -72,19 +68,20 @@
           return;
         }
 
-        log("正在請求連接 MetaMask...");
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: SEPOLIA_CHAIN_ID }]
+        });
 
-        // 請求使用者授權連接錢包
+        log("正在請求連接 MetaMask...");
         await window.ethereum.request({ method: "eth_requestAccounts" });
 
-        // 建立 Provider 與 Signer 實例
         provider = new ethers.BrowserProvider(window.ethereum);
         signer = await provider.getSigner();
+        const network = await provider.getNetwork();
+        log(`目前鏈 ID: ${network.chainId.toString()}`);
 
-        // 建立合約實例，並連接到 Signer (用於發送交易)
         contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-
-        // 使用唯讀的 Provider 來呼叫 view 函式
         readOnlyContract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
 
         log(`成功連接！錢包地址: ${await signer.getAddress()}`);
@@ -92,16 +89,18 @@
         connectBtn.disabled = true;
         updateBtn.disabled = false;
 
-        // 成功連接後，立即讀取並顯示訊息
         await getMessage();
       } catch (error) {
         log(`連接失敗: ${error.message}`);
       }
     }
 
-    // 函式：讀取合約訊息
     async function getMessage() {
       try {
+        const code = await provider.getCode(CONTRACT_ADDRESS);
+        if (code === "0x") {
+          throw new Error(`目前網路查不到這個合約地址的程式碼：${CONTRACT_ADDRESS}`);
+        }
         const message = await readOnlyContract.message();
         messageOutput.textContent = `"${message}"`;
         log("成功讀取當前訊息。");
@@ -110,39 +109,29 @@
       }
     }
 
-    // 函式：更新合約訊息
     async function updateMessage() {
       try {
         const newMessage = newMessageInput.value;
-
         if (!newMessage) {
           log("請輸入要更新的訊息。");
           return;
         }
 
         log(`正在發送交易，將訊息更新為: "${newMessage}"`);
-
-        // 使用已連接 Signer 的合約實例來發送交易
         const tx = await contract.updateMessage(newMessage);
         log(`交易 Hash: ${tx.hash}`);
-
-        // 等待交易被區塊鏈確認
         log("等待交易確認...");
         await tx.wait();
         log("✅ 交易確認完畢！");
-
-        // 交易成功後，再次讀取並更新顯示
         await getMessage();
       } catch (error) {
         log(`交易失敗: ${error.message}`);
       }
     }
 
-    // 監聽按鈕點擊事件
     connectBtn.addEventListener("click", connectWallet);
     updateBtn.addEventListener("click", updateMessage);
 
-    // 頁面載入後，顯示提示
     document.addEventListener("DOMContentLoaded", () => {
       log("請點擊『連接 MetaMask』按鈕，開始測試。");
     });

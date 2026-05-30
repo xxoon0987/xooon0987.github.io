@@ -15,6 +15,8 @@ Data Science student focused on turning raw data and signals into practical syst
 | Classroom Alert Assistant | Real-time reminder detection | Python, FastAPI, CLI/GUI | Local MVP with transcript/audio monitoring |
 | Face-Control Game Interaction | Human-computer interaction via face/head motion | OpenCV, dlib, pyautogui | Mapped mouth/head actions to real-time keyboard control |
 
+Project index: [Portfolio Projects](projects/README.md)
+
 ## What I Care About
 
 - Building systems that are reproducible, testable, and explainable

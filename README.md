@@ -16,6 +16,7 @@ Data Science student focused on turning raw data and signals into practical syst
 | Face-Control Game Interaction | Human-computer interaction via face/head motion | OpenCV, dlib, pyautogui | Mapped mouth/head actions to real-time keyboard control |
 
 Project index: [Portfolio Projects](projects/README.md)
+Toolkit: [Portfolio Kit](portfolio-kit/README.md)
 
 ## What I Care About
 

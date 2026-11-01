@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f3ec">
+  <meta name="description" content="資料探勘觀念選擇題字卡：逐項詳解、錯題紀錄與依弱點複習。">
+  <title>DATAMININ｜資料探勘觀念字卡</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="DATAMININ 首頁"><span class="brand-mark">D.</span><span>DATAMININ</span></a>
+      <nav class="nav" aria-label="主要導覽">
+        <button class="nav-link active" data-view="practice" type="button">開始練習</button>
+        <button class="nav-link" data-view="mistakes" type="button">錯題本 <span id="dueBadge" class="mini-badge" hidden>0</span></button>
+        <button class="nav-link" data-view="progress" type="button">學習紀錄</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-line"></span> DATA MINING · CONCEPT PRACTICE</p>
+          <h1 id="heroTitle">把名詞，<br><em>練成直覺。</em></h1>
+          <p class="hero-sub">每題都是觀念四選一。先作答，再看正確原因與三個錯誤選項的逐項解釋；錯過的題目會留在錯題本，讓複習有方向。</p>
+          <div class="hero-actions">
+            <button id="heroStart" class="button primary" type="button">開始一回合 <span aria-hidden="true">↗</span></button>
+            <span class="source-note">依課程筆記重新編寫 · 非老師原題</span>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="orbit orbit-outer"></div><div class="orbit orbit-inner"></div>
+          <span class="orbit-word orbit-word-a">CLASSIFY</span><span class="orbit-word orbit-word-b">CLUSTER</span><span class="orbit-word orbit-word-c">REVIEW</span>
+          <div class="hero-card"><span class="hero-card-kicker">CONCEPT 01 / 78</span><strong>有標籤，<br>預測類別。</strong><span class="hero-card-answer">分類 <b>✓</b></span></div>
+          <span class="spark spark-a">✳</span><span class="spark spark-b">✦</span>
+        </div>
+      </section>
+
+      <section class="stats-strip" aria-label="目前學習概況">
+        <div class="stat"><span class="stat-label">全新觀念題</span><strong id="questionCount">78</strong><span class="stat-unit">題</span></div>
+        <div class="stat"><span class="stat-label">累積作答</span><strong id="attemptCount">0</strong><span class="stat-unit">次</span></div>
+        <div class="stat"><span class="stat-label">目前答對率</span><strong id="accuracyCount">—</strong><span class="stat-unit"></span></div>
+        <div class="stat"><span class="stat-label">待加強</span><strong id="dueCount">0</strong><span class="stat-unit">題</span></div>
+      </section>
+
+      <section id="practiceView" class="view content-grid" aria-label="練習區">
+        <div class="main-column">
+          <div class="section-head"><div><p class="eyebrow small">YOUR PRACTICE SPACE</p><h2>今天練哪一組？</h2></div><p>先選題目，再一張一張作答。</p></div>
+          <div class="setup panel">
+            <label class="field"><span>練習方式</span><select id="modeSelect"><option value="quick">隨機 20 題</option><option value="all">完整 78 題</option><option value="due">待加強錯題</option><option value="ever">所有曾錯題</option></select></label>
+            <label class="field"><span>章節範圍</span><select id="topicSelect"><option value="all">全部章節</option></select></label>
+            <button id="startButton" class="button dark" type="button">建立練習 <span aria-hidden="true">→</span></button>
+          </div>
+          <div id="quizArea" class="quiz-area" hidden>
+            <div class="quiz-toolbar"><span id="sessionLabel" class="session-label"></span><button id="endButton" class="text-button" type="button">結束本回合</button></div>
+            <div class="progress-track" role="progressbar" aria-label="本回合進度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progressFill"></div></div>
+            <article class="question-card" aria-live="polite">
+              <div class="card-meta"><span id="cardNumber">01 / 20</span><span id="cardTopic" class="topic-pill"></span></div>
+              <h3 id="questionPrompt"></h3>
+              <p class="card-hint">選出最合適的一項</p>
+              <div id="options" class="options" role="group" aria-label="選擇答案"></div>
+              <div id="feedback" class="feedback" hidden></div>
+              <div id="explanation" class="explanation" hidden>
+                <div class="explanation-head"><span>逐項詳解</span><span class="small-muted">點完才揭曉</span></div>
+                <div id="explanationRows"></div>
+              </div>
+              <div class="card-footer"><button id="explainButton" class="button light" type="button" hidden>查看逐項詳解 <span aria-hidden="true">⌄</span></button><button id="nextButton" class="button dark" type="button" hidden>下一題 <span aria-hidden="true">→</span></button></div>
+            </article>
+          </div>
+          <div id="sessionDone" class="done panel" hidden><span class="done-icon">✓</span><p class="eyebrow small">ROUND COMPLETE</p><h3>這回合完成了。</h3><p id="doneSummary"></p><div class="done-actions"><button id="doneReview" class="button dark" type="button">接著複習錯題</button><button id="doneAgain" class="button light" type="button">再練一回合</button></div></div>
+        </div>
+        <aside class="side-column" aria-label="複習提醒">
+          <div class="side-card"><div class="side-icon">◎</div><h3>怎麼使用這份題庫</h3><p>每題先靠觀念選答案。選完後再打開逐項詳解，確認其他三項為何不適用。</p><div class="side-divider"></div><p class="side-small">答錯的題目需要在後續回合答對兩次，才會從「待加強」移出；錯誤歷史仍保留。</p></div>
+          <div class="side-note"><span>01 — 04</span><strong>核心考點</strong><p>任務類型、資料處理、關聯規則、分群。</p></div>
+          <div class="side-note"><span>05 — 06</span><strong>延伸章節</strong><p>降維與分類依已上傳教材整理，實際考試範圍仍以老師公告為準。</p></div>
+        </aside>
+      </section>
+
+      <section id="mistakesView" class="view inner-page" hidden aria-label="錯題本">
+        <div class="page-title"><p class="eyebrow small">MISTAKE NOTEBOOK</p><h2>錯題本</h2><p>看清楚自己選了什麼、正確答案是什麼，再把名詞差異練熟。</p></div>
+        <div class="review-banner"><div><span class="banner-count" id="mistakeDueCount">0</span><span>題待加強</span><p>每題在後續回合連續答對兩次，才會從待加強移出。</p></div><button id="reviewDueButton" class="button primary" type="button">練待加強題 <span aria-hidden="true">↗</span></button></div>
+        <div class="list-toolbar"><div class="segmented" role="group" aria-label="錯題篩選"><button class="segment active" data-mistake-filter="due" type="button">待加強</button><button class="segment" data-mistake-filter="ever" type="button">所有曾錯</button></div><span id="mistakeListCount"></span></div>
+        <div id="mistakeList" class="mistake-list"></div>
+      </section>
+
+      <section id="progressView" class="view inner-page" hidden aria-label="學習紀錄">
+        <div class="page-title"><p class="eyebrow small">YOUR LEARNING RECORD</p><h2>學習紀錄</h2><p>紀錄保存在這台裝置的瀏覽器。換裝置前可以匯出，再在新裝置匯入。</p></div>
+        <div class="record-grid"><div class="record-card"><span>累積作答</span><strong id="recordAttempts">0</strong><small>次選擇</small></div><div class="record-card"><span>答對率</span><strong id="recordAccuracy">—</strong><small>累積所有作答</small></div><div class="record-card"><span>曾經答錯</span><strong id="recordEver">0</strong><small>不同題目</small></div><div class="record-card"><span>待加強</span><strong id="recordDue">0</strong><small>尚未連續答對兩次</small></div></div>
+        <div class="two-col"><div class="panel record-panel"><div class="panel-heading"><h3>章節掌握</h3><span>依累積答對率排序</span></div><div id="topicStats"></div></div><div class="panel record-panel"><div class="panel-heading"><h3>資料備份</h3><span>只儲存在你的瀏覽器</span></div><p>本站沒有帳號或雲端同步。匯出檔案包含作答時間與選項，不含姓名。</p><div class="backup-actions"><button id="exportButton" class="button dark" type="button">匯出紀錄</button><label class="button light import-label">匯入紀錄<input id="importInput" type="file" accept="application/json,.json" hidden></label></div><p id="storageMessage" class="storage-message" role="status"></p></div></div>
+        <div class="panel history-panel"><div class="panel-heading"><h3>最近作答</h3><span>保留每一次選擇</span></div><div id="historyList"></div></div>
+      </section>
+    </main>
+    <footer class="footer"><span>DATAMININ <i>✳</i> 做一題，懂一個名詞。</span><span>本題庫是練習用途，非正式考題。</span></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

@@ -6,6 +6,12 @@ Data Science student focused on turning raw data and signals into practical syst
 - Core areas: Data Engineering, Data Analytics, Computer Vision, Applied ML
 - Stack: Python, SQL, Pandas, NumPy, PyTorch, OpenCV, FastAPI, Elasticsearch, Kibana
 
+## 資料探勘練習網站
+
+[開啟 DATAMININ｜78 題資料探勘觀念練習](https://xxoon0987.github.io/xooon0987.github.io/dataminin/)
+
+可在其他電腦直接開啟練習。作答紀錄保存在各電腦的瀏覽器；換電腦時，可在網站的「學習紀錄」匯出與匯入。
+
 ## Featured Work
 
 | Project | Focus | Tech | Key Result |

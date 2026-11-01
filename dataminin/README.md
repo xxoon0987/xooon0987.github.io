@@ -1,5 +1,11 @@
 # DATAMININ 資料探勘觀念字卡
 
+## 直接開始練習
+
+[開啟 DATAMININ｜78 題資料探勘觀念練習](https://xxoon0987.github.io/xooon0987.github.io/dataminin/)
+
+在其他電腦打開上方連結即可練習。作答紀錄存在目前瀏覽器，換電腦時可用網站內的「學習紀錄」匯出與匯入。
+
 靜態網站，直接放在 GitHub Pages 的 `dataminin/` 目錄即可使用。免安裝、免登入、無後端。
 
 ## 題庫

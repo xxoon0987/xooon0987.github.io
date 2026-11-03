@@ -1,4 +1,4 @@
-// 新題庫：依 2026-10-21 課程複習筆記與既有 65 題的主題重新編寫。
+// 舊版補充題庫：依 2026-10-21 課程複習筆記與既有 65 題的主題重新編寫。
 // 選項與詳解分開儲存；作答前只顯示精簡選項。
 const q = (id, topic, prompt, choices, answer, why, focus) => ({
   id, topic, prompt, focus,

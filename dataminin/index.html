@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f6f3ec">
-  <meta name="description" content="資料探勘觀念選擇題字卡：逐項詳解、錯題紀錄與依弱點複習。">
-  <title>DATAMININ｜資料探勘觀念字卡</title>
+  <meta name="description" content="依考試重點整理的資料探勘複習筆記與選擇題：實例講解、逐項詳解、錯題紀錄。">
+  <title>DATAMININ｜資料探勘考試重點與題庫</title>
   <link rel="stylesheet" href="./styles.css">
   <script type="module" src="./app.mjs"></script>
 </head>
@@ -15,6 +15,7 @@
       <a class="brand" href="./" aria-label="DATAMININ 首頁"><span class="brand-mark">D.</span><span>DATAMININ</span></a>
       <nav class="nav" aria-label="主要導覽">
         <button class="nav-link active" data-view="practice" type="button">開始練習</button>
+        <button class="nav-link" data-view="guide" type="button">考試重點</button>
         <button class="nav-link" data-view="mistakes" type="button">錯題本 <span id="dueBadge" class="mini-badge" hidden>0</span></button>
         <button class="nav-link" data-view="progress" type="button">學習紀錄</button>
       </nav>
@@ -23,34 +24,37 @@
     <main>
       <section class="hero" aria-labelledby="heroTitle">
         <div class="hero-copy">
-          <p class="eyebrow"><span class="eyebrow-line"></span> DATA MINING · CONCEPT PRACTICE</p>
-          <h1 id="heroTitle">把名詞，<br><em>練成直覺。</em></h1>
-          <p class="hero-sub">每題都是觀念四選一。先作答，再看正確原因與三個錯誤選項的逐項解釋；錯過的題目會留在錯題本，讓複習有方向。</p>
+          <p class="eyebrow"><span class="eyebrow-line"></span> DATA MINING · EXAM REVIEW</p>
+          <h1 id="heroTitle">先看懂，<br><em>再練熟。</em></h1>
+          <p class="hero-sub">依你提供的考試重點重新整理。每個考點都有白話解釋與實際例子；新版題目作答後會顯示對錯與四個選項的逐項詳解，錯題仍可反覆複習。</p>
           <div class="hero-actions">
-            <button id="heroStart" class="button primary" type="button">開始一回合 <span aria-hidden="true">↗</span></button>
-            <span class="source-note">依課程筆記重新編寫 · 非老師原題</span>
+            <button id="heroStart" class="button primary" type="button">開始新版練習 <span aria-hidden="true">↗</span></button>
+            <button id="heroGuide" class="button light" type="button">先看考試重點</button>
+            <span class="source-note">依 11/3 提供的重點重編 · 非老師原題</span>
           </div>
         </div>
         <div class="hero-art" aria-hidden="true">
           <div class="orbit orbit-outer"></div><div class="orbit orbit-inner"></div>
           <span class="orbit-word orbit-word-a">CLASSIFY</span><span class="orbit-word orbit-word-b">CLUSTER</span><span class="orbit-word orbit-word-c">REVIEW</span>
-          <div class="hero-card"><span class="hero-card-kicker">CONCEPT 01 / 78</span><strong>有標籤，<br>預測類別。</strong><span class="hero-card-answer">分類 <b>✓</b></span></div>
+          <div class="hero-card"><span id="heroCardCount" class="hero-card-kicker">EXAM FOCUS</span><strong>看懂考點，<br>再做一題。</strong><span class="hero-card-answer">理解 × 練習 <b>✓</b></span></div>
           <span class="spark spark-a">✳</span><span class="spark spark-b">✦</span>
         </div>
       </section>
 
       <section class="stats-strip" aria-label="目前學習概況">
-        <div class="stat"><span class="stat-label">補充觀念題</span><strong id="questionCount">78</strong><span class="stat-unit">題</span></div>
+        <div class="stat"><span class="stat-label">新版考試題</span><strong id="questionCount">—</strong><span class="stat-unit">題</span></div>
         <div class="stat"><span class="stat-label">累積作答</span><strong id="attemptCount">0</strong><span class="stat-unit">次</span></div>
         <div class="stat"><span class="stat-label">目前答對率</span><strong id="accuracyCount">—</strong><span class="stat-unit"></span></div>
-        <div class="stat"><span class="stat-label">待加強</span><strong id="dueCount">0</strong><span class="stat-unit">題</span></div>
+        <div class="stat"><span class="stat-label">兩版待加強</span><strong id="dueCount">0</strong><span class="stat-unit">題</span></div>
       </section>
 
       <section id="practiceView" class="view content-grid" aria-label="練習區">
         <div class="main-column">
-          <div class="section-head"><div><p class="eyebrow small">YOUR PRACTICE SPACE</p><h2>今天練哪一組？</h2></div><p>先選題目，再一張一張作答。</p></div>
+          <div class="section-head"><div><p class="eyebrow small">YOUR PRACTICE SPACE</p><h2>今天練哪一組？</h2></div><p>新版依考試重點編寫，舊版題目也保留。</p></div>
           <div class="setup panel">
-            <label class="field"><span>練習方式</span><select id="modeSelect"><option value="quick">隨機 20 題</option><option value="all">完整 78 題</option><option value="due">待加強錯題</option><option value="ever">所有曾錯題</option></select></label>
+            <label class="field"><span>題庫</span><select id="bankSelect"><option value="v2">新版考試重點</option><option value="legacy">舊版補充題</option><option value="all">兩版一起練</option></select></label>
+            <label class="field"><span>題型</span><select id="kindSelect"><option value="concept">只練觀念</option><option value="all">觀念＋少量計算</option></select></label>
+            <label class="field"><span>練習方式</span><select id="modeSelect"><option value="quick">隨機 20 題</option><option value="all">完整題庫</option><option value="due">待加強錯題</option><option value="ever">所有曾錯題</option></select></label>
             <label class="field"><span>章節範圍</span><select id="topicSelect"><option value="all">全部章節</option></select></label>
             <button id="startButton" class="button dark" type="button">建立練習 <span aria-hidden="true">→</span></button>
           </div>
@@ -73,10 +77,21 @@
           <div id="sessionDone" class="done panel" hidden><span class="done-icon">✓</span><p class="eyebrow small">ROUND COMPLETE</p><h3>這回合完成了。</h3><p id="doneSummary"></p><div class="done-actions"><button id="doneReview" class="button dark" type="button">接著複習錯題</button><button id="doneAgain" class="button light" type="button">再練一回合</button></div></div>
         </div>
         <aside class="side-column" aria-label="複習提醒">
-          <div class="side-card"><div class="side-icon">◎</div><h3>怎麼使用這份題庫</h3><p>每題先靠觀念選答案。選完後再打開逐項詳解，確認其他三項為何不適用。</p><div class="side-divider"></div><p class="side-small">答錯的題目需要在後續回合答對兩次，才會從「待加強」移出；錯誤歷史仍保留。</p></div>
-          <div class="side-note"><span>01 — 04</span><strong>核心考點</strong><p>任務類型、資料處理、關聯規則、分群。</p></div>
-          <div class="side-note"><span>05 — 06</span><strong>延伸章節</strong><p>降維與分類依已上傳教材整理，實際考試範圍仍以老師公告為準。</p></div>
+          <div class="side-card"><div class="side-icon">◎</div><h3>建議的複習順序</h3><p>先到「考試重點」看白話解釋和例子，再做新版題目。答完打開逐項詳解，確認每個錯選項為何不適用。</p><div class="side-divider"></div><p class="side-small">答錯的題目在後續回合連續答對兩次，才會從「待加強」移出；錯誤歷史仍保留。</p></div>
+          <div class="side-note"><span>EXAM SCOPE</span><strong>依照片整理</strong><p>導論、資料、降維、關聯、前處理、分群、決策樹與評估、貝氏、KNN／SVM／GLM。</p></div>
+          <div class="side-note"><span>CALCULATION</span><strong>計算題可自行切換</strong><p>預設只練觀念。照片特別提到階層分群計算，也列出卡方與貝氏計算；要練這些簡短題目，可在「題型」切換。</p></div>
         </aside>
+      </section>
+
+      <section id="guideView" class="view inner-page" hidden aria-label="考試重點複習">
+        <div class="page-title"><p class="eyebrow small">EXAM STUDY GUIDE</p><h2>考試重點複習</h2><p>按你提供的清單整理。每個考點先用白話說明，再用情境例子幫你看出差別。</p></div>
+        <p class="guide-caveat">照片中「降維」第 1 項是看不清的投影片照片，未擅自猜內容；少數只有標題的考點已在卡片內註明解讀範圍。</p>
+        <div class="guide-toolbar panel">
+          <label class="field"><span>章節</span><select id="guideChapter"><option value="all">全部章節</option></select></label>
+          <label class="field"><span>搜尋名詞或例子</span><input id="guideSearch" type="search" placeholder="例如 PCA、DBSCAN、ROC"></label>
+          <span id="guideCount" class="guide-count"></span>
+        </div>
+        <div id="guideContent" class="guide-content"></div>
       </section>
 
       <section id="mistakesView" class="view inner-page" hidden aria-label="錯題本">

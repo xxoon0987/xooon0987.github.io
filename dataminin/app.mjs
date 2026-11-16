@@ -1,13 +1,20 @@
 import { QUESTIONS as LEGACY_QUESTIONS, TOPICS as LEGACY_TOPICS } from './questions.mjs';
-import { V2_QUESTIONS, V2_TOPICS } from './questions-v2.mjs?v=20261116-1';
+import { V2_QUESTIONS, V2_TOPICS, SCENARIO_QUESTIONS_1116 } from './questions-v2.mjs?v=20261116-2';
 import { STUDY_GUIDE } from './study-guide.mjs';
 
 const STORAGE_KEY = 'dataminin-attempts-v1';
-const ALL_QUESTIONS = [...V2_QUESTIONS, ...LEGACY_QUESTIONS];
+const ALL_ORIGINAL_QUESTIONS = [...V2_QUESTIONS, ...LEGACY_QUESTIONS];
+const ALL_QUESTIONS = [...V2_QUESTIONS, ...SCENARIO_QUESTIONS_1116, ...LEGACY_QUESTIONS];
+const SCENARIO_IDS = new Set(SCENARIO_QUESTIONS_1116.map(question => question.id));
+const SCENARIO_TOPICS = [...new Set(SCENARIO_QUESTIONS_1116.map(question => question.topic))];
 const TOPIC_GROUPS = [
   ...V2_TOPICS.map(topic => ({ label: `新版 · ${topic}`, ids: new Set(V2_QUESTIONS.filter(question => question.topic === topic).map(question => question.id)) })),
+  ...SCENARIO_TOPICS.map(topic => ({ label: `獨立題庫 · ${topic}`, ids: new Set(SCENARIO_QUESTIONS_1116.filter(question => question.topic === topic).map(question => question.id)) })),
   ...LEGACY_TOPICS.map(topic => ({ label: `舊版 · ${topic}`, ids: new Set(LEGACY_QUESTIONS.filter(question => question.topic === topic).map(question => question.id)) })),
 ];
+const questionBankLabel = question => SCENARIO_IDS.has(question.id)
+  ? '情境加強 1116'
+  : question.id.startsWith('v2') ? '新版主題庫' : '舊版';
 const byId = new Map(ALL_QUESTIONS.map(question => [question.id, question]));
 const GUIDE_CHAPTER_FOR_TOPIC = {
   '導論': 'intro', '資料與相似度': 'data', '降維': 'dimension',
@@ -114,7 +121,11 @@ function setView(view) {
 }
 
 function questionsForBank(bank) {
-  return bank === 'legacy' ? LEGACY_QUESTIONS : bank === 'all' ? ALL_QUESTIONS : V2_QUESTIONS;
+  if (bank === 'legacy') return LEGACY_QUESTIONS;
+  if (bank === 'scenario') return SCENARIO_QUESTIONS_1116;
+  if (bank === 'originals') return ALL_ORIGINAL_QUESTIONS;
+  if (bank === 'all') return ALL_QUESTIONS;
+  return V2_QUESTIONS;
 }
 
 function questionsForFilters(bank, kind) {
@@ -190,7 +201,7 @@ function renderQuestion() {
   const question = session.deck[session.index];
   const order = session.orders.get(question.id);
   session.answered = false;
-  const bankLabel = session.bank === 'legacy' ? '舊版' : session.bank === 'all' ? '兩版' : '新版';
+  const bankLabel = ({ v2: '新版主題庫', scenario: '情境加強 1116', legacy: '舊版', originals: '原有兩版', all: '全部題庫' })[session.bank] || '題庫';
   $('sessionLabel').textContent = `${bankLabel} · ${session.mode === 'due' ? '待加強複習' : session.mode === 'ever' ? '曾錯題複習' : '觀念練習中'}`;
   $('progressFill').style.width = `${session.index / session.deck.length * 100}%`;
   document.querySelector('.progress-track').setAttribute('aria-valuenow', String(Math.round(session.index / session.deck.length * 100)));
@@ -300,7 +311,7 @@ function renderMistakes() {
     const left = document.createElement('div');
     const topic = document.createElement('span');
     topic.className = 'topic-tag';
-    topic.textContent = `${question.id.startsWith('v2') ? '新版' : '舊版'} · ${question.topic} · ${question.focus}`;
+    topic.textContent = `${questionBankLabel(question)} · ${question.topic} · ${question.focus}`;
     const title = document.createElement('h3');
     title.textContent = question.prompt;
     left.append(topic, title);
@@ -330,7 +341,7 @@ function renderMistakes() {
     renderExplanation(explanation, question, [0, 1, 2, 3], record.lastWrong.selected);
     details.append(summaryNode, explanation);
     item.append(top, choices, details);
-    if (question.id.startsWith('v2')) {
+    if (question.id.startsWith('v2') && !SCENARIO_IDS.has(question.id)) {
       const guideButton = document.createElement('button');
       guideButton.type = 'button';
       guideButton.className = 'text-button guide-jump';
@@ -377,7 +388,7 @@ function renderProgress() {
     const date = document.createElement('span');
     date.textContent = new Intl.DateTimeFormat('zh-TW', { dateStyle: 'short', timeStyle: 'short' }).format(new Date(event.at));
     const description = document.createElement('strong');
-    description.textContent = `${question.id.startsWith('v2') ? '新版' : '舊版'} · ${question.focus} · 選了 ${question.choices[event.selected].text}`;
+    description.textContent = `${questionBankLabel(question)} · ${question.focus} · 選了 ${question.choices[event.selected].text}`;
     const result = document.createElement('span'); result.className = `result${event.correct ? '' : ' wrong'}`;
     result.textContent = event.correct ? '答對' : '答錯';
     row.append(date, description, result); history.append(row);
@@ -501,7 +512,7 @@ function init() {
   STUDY_GUIDE.forEach(chapter => $('guideChapter').append(new Option(chapter.title, chapter.id)));
   $('guideChapter').addEventListener('change', renderGuide);
   $('guideSearch').addEventListener('input', renderGuide);
-  $('heroCardCount').textContent = `${V2_QUESTIONS.length} NEW QUESTIONS`;
+  $('heroCardCount').textContent = `${V2_QUESTIONS.length} MAIN · ${SCENARIO_QUESTIONS_1116.length} SEPARATE`;
   updateCounters();
   document.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', () => setView(link.dataset.view)));
   $('heroStart').addEventListener('click', () => startSession('quick', 'all', 'v2', 'concept'));
@@ -521,7 +532,7 @@ function init() {
   });
   $('reviewDueButton').addEventListener('click', () => startSession('due', 'all', 'all', 'all'));
   $('doneReview').addEventListener('click', () => startSession('due', 'all', 'all', 'all'));
-  $('doneAgain').addEventListener('click', () => startSession('quick', 'all', 'v2', 'concept'));
+  $('doneAgain').addEventListener('click', () => startSession('quick', 'all', $('bankSelect').value, $('kindSelect').value));
   document.querySelectorAll('.segment').forEach(button => button.addEventListener('click', () => {
     mistakeFilter = button.dataset.mistakeFilter;
     document.querySelectorAll('.segment').forEach(item => item.classList.toggle('active', item === button));

@@ -1,5 +1,5 @@
 import { QUESTIONS as LEGACY_QUESTIONS, TOPICS as LEGACY_TOPICS } from './questions.mjs';
-import { V2_QUESTIONS, V2_TOPICS } from './questions-v2.mjs';
+import { V2_QUESTIONS, V2_TOPICS } from './questions-v2.mjs?v=20261116-1';
 import { STUDY_GUIDE } from './study-guide.mjs';
 
 const STORAGE_KEY = 'dataminin-attempts-v1';
